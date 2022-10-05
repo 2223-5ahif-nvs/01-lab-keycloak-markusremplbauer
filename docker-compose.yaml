@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  keycloak-db:
+    image: postgres:14.5-alpine
+    env_file:
+      - ./keycloak-postgres.env
+    container_name: keycloak-db
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    volumes: 
+      - ./keycloak-db:/var/lib/postgresql/data
+    networks:
+      - keycloak-network
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:19.0.2
+    restart: unless-stopped
+    env_file:
+      - ./keycloak-postgres.env
+    entrypoint: /opt/keycloak/bin/kc.sh start --auto-build
+    ports:
+      - 8080:8080
+      - 8443:8443
+    networks:
+      - keycloak-network
+    depends_on:
+      - keycloak-db
+networks:
+  keycloak-network:
+    driver: bridge
