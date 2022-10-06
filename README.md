@@ -1,6 +1,7 @@
 # 01-lab-keycloak-markusremplbauer
 
-This repo contains a keycloak-server using a postgres-db and uses traefik as a reverse proxy which secures the keycloak using Let's Encrypt.
+This repo contains a `keycloak-server` using a `postgres-db` and uses `traefik` as a reverse proxy which secures the keycloak using Let's Encrypt.
+The repo contains a simple `quarkus service` using the `keycloak-server`as oidc provider for the exposed endpoints.
 
 ## Keycloak
 
