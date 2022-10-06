@@ -1,2 +1,3 @@
 keycloak-db/*
 letsencrypt/*
+traefik-ssl-certs/*

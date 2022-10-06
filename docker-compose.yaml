@@ -1,4 +1,9 @@
 version: '3.8'
+
+volumes:
+  traefik-ssl-certs:
+    driver: local
+
 services:
   keycloak-db:
     image: postgres:14.5
@@ -19,9 +24,10 @@ services:
     entrypoint: /opt/keycloak/bin/kc.sh start --auto-build
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.entrypoints=web,websecure"
       - "traefik.http.routers.keycloak.rule=Host(`markus.jakobrathberger.eu`)"
-      - "traefik.http.routers.keycloak.entrypoints=websecure"
-      - "traefik.http.routers.keycloak.tls.certresolver=myresolver"
+      - "traefik.http.routers.keycloak.tls=true"
+      - "traefik.http.routers.keycloak.tls.certresolver=production"
     networks:
       - keycloak-network
     depends_on:
@@ -30,22 +36,15 @@ services:
     container_name: traefik
     image: traefik:v2.9.1
     restart: unless-stopped
-    command:
-      # - "--log.level=DEBUG"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=m.remplbauer@students.htl-leonding.ac.at"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
+      - "80:80"
       - "443:443"
+      # (Optional) Expose Dashboard
+      # - "8080:8080"  # Don't do this in production!
     volumes:
-      # - ./traefik.toml:/etc/traefik/traefik.toml # if you use a config file
-      - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ./traefik.yaml:/etc/traefik/traefik.yaml
+      - ./traefik-ssl-certs:/ssl-certs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - keycloak-network
 networks:
