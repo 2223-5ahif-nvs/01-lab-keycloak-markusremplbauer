@@ -23,8 +23,7 @@ jobs:
           ssh ${{ secrets.DEPUSER }}@${{ secrets.DEPIP }} "
           mkdir -p /home/${{ secrets.DEPUSER }}/${{ secrets.DEPDIR}}
           "
-          scp -r docker-compose.yaml ${{ secrets.DEPUSER }}@${{ secrets.DEPIP }}:/home/${{ secrets.DEPUSER }}/${{ secrets.DEPDIR}}
-          scp -r keycloak-postgres.env ${{ secrets.DEPUSER }}@${{ secrets.DEPIP }}:/home/${{ secrets.DEPUSER }}/${{ secrets.DEPDIR}}
+          scp -r . ${{ secrets.DEPUSER }}@${{ secrets.DEPIP }}:/home/${{ secrets.DEPUSER }}/${{ secrets.DEPDIR}}
       - name: Run Docker Container
         run: |
           ssh ${{ secrets.DEPUSER }}@${{ secrets.DEPIP }} "
