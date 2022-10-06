@@ -7,8 +7,13 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 
 @Path("/api/users")
+@RolesAllowed({"user"})
+@Produces(MediaType.APPLICATION_JSON)
 public class UserResource {
     @Inject
     SecurityIdentity identity;
@@ -25,7 +30,7 @@ public class UserResource {
     @NoCache
     @RolesAllowed({"admin"})
     public String admin(){
-        return "granted";
+        return "access granted";
     }
 
     public static class User {
