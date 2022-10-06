@@ -22,7 +22,6 @@ services:
       - "traefik.http.routers.keycloak.rule=Host(`markus.jakobrathberger.eu`)"
       - "traefik.http.routers.keycloak.entrypoints=websecure"
       - "traefik.http.routers.keycloak.tls.certresolver=myresolver"
-      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
     networks:
       - keycloak-network
     depends_on:
@@ -32,18 +31,19 @@ services:
     image: traefik:v2.9.1
     restart: unless-stopped
     command:
+      # - "--log.level=DEBUG"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=m.remplbauer@students.htl-leonding.ac.at"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
       - "443:443"
     volumes:
+      # - ./traefik.toml:/etc/traefik/traefik.toml # if you use a config file
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
